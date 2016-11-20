@@ -1,0 +1,46 @@
+import MySQLdb
+
+####DATABASE CONNECTION
+db=MySQLdb.connect(host="jodebane.mysql.pythonanywhere-services.com",
+                   user="*******",
+                   passwd="*******",
+                   db="jodebane$Budgeting",
+
+                   )
+
+
+####Beginning Check
+
+cursor = db.cursor()
+def openingcheck():
+    print ("budgets: ")
+    r= cursor.execute("SELECT * FROM Budgets")
+    print (r)
+
+def createtable():
+    cursor.execute("DROP TABLE Budgets")
+    cursor.execute("CREATE TABLE Budgets(IDnum int, Name text, Type text, Weeks int)")
+
+
+def createfirstbudget():
+    createtable()
+    budgetnum = 1
+    print ("Enter a name for this budget:  ")
+    budgetname = input("Enter a name    ")
+    print ("press 1 for repeating, 2 for one-time  ")
+    budgettype = int(input("1,  or 2 "))
+    if budgettype == 1 or budgettype == 2:
+        if budgettype == 1:
+            budgettypetext = "repeating"
+        elif budgettype == 2:
+            budgettypetext = "one-time"
+        print ("Enter a timespan for this budget by number of weeks. For instance, if it is a monthly budget, type '4'  ")
+        budgettimespan = int(input("Enter a number of weeks  "))
+        cursor.execute("INSERT INTO Budgets VALUES(%s, %s, %s, %s)", (budgetnum, budgetname, budgettypetext, budgettimespan))
+        cursor.execute("SELECT * FROM Budgets")
+        rows = cursor.fetchall()
+        print (rows)
+    else:
+        print ("error. Please enter a correct number and try again")
+        createfirstbudget()
+createfirstbudget()
