@@ -9,6 +9,10 @@ db=MySQLdb.connect(host="jodebane.mysql.pythonanywhere-services.com",
                    )
 
 
+def budgetkeyprint():
+    print ("Budget Number, Budget Name, Type, Number of Weeks")
+
+
 ####Beginning Check
 
 cursor = db.cursor()
@@ -25,23 +29,33 @@ def createtable():
 
 def checktableisthere():
     global truth
-    cursor.execute("SELECT COUNT(*) FROM Budgets")
-    checkvar = cursor.fetchone()
+    global budgetid
+    cursor.execute("SELECT * FROM Budgets")
+    checkvar = cursor.fetchall()
     if len(checkvar) > 0:
+        cursor.execute("SELECT * FROM Budgets")
+        print("Number of budgets so far: ")
+        budgetid = (len(list(cursor)))
+        print(budgetid)
         truth = 1
+        budgetid = (len(list(cursor)))
+        return budgetid
         return truth
         return True
     truth = 0;
+    budgetid = 0
+    return budgetid
     return truth
     return False
 
 
-def createfirstbudget(truth):
+
+def createfirstbudget(truth, budgetid):
     if truth == 0:
         budgetnum = 1
     elif truth == 1:
-        budgetnum = 2
-    print ("Enter a name for this budget:  ")
+        budgetnum = budgetid+1
+        print ("Enter a name for this budget:  ")
     budgetname = input("Enter a name    ")
     print ("press 1 for repeating, 2 for one-time  ")
     budgettype = int(input("1,  or 2 "))
@@ -55,19 +69,22 @@ def createfirstbudget(truth):
         cursor.execute("INSERT INTO Budgets VALUES(%s, %s, %s, %s)", (budgetnum, budgetname, budgettypetext, budgettimespan))
         cursor.execute("SELECT * FROM Budgets")
         rows = cursor.fetchall()
+        budgetkeyprint()
         print (rows)
+        db.commit()
     else:
         print ("error. Please enter a correct number and try again")
-        createfirstbudget()
+        createfirstbudget(truth, budgetid)
 
 
 def startingmenu():
-    checktableisthere()
     global truth
+    global budgetid
     print ("To create a new budget, press 1. To manage an existing budget, press 2")
     startanswerint = int(input("Press 1 or 2 "))
     if startanswerint == 1:
-        createfirstbudget(truth)
+        checktableisthere()
+        createfirstbudget(truth, budgetid)
     elif startanswerint == 2:
         print("PLACEHOLDER")
 
