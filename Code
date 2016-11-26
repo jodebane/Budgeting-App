@@ -26,7 +26,7 @@ def createtable():
     cursor.execute("CREATE TABLE Budgets(IDnum int, Name text, Type text, Weeks int)")
 
 
-
+###Checks that Table Exists
 def checktableisthere():
     global truth
     global budgetid
@@ -49,7 +49,7 @@ def checktableisthere():
     return False
 
 
-
+###Creates Info on First Budget in the Main Table
 def createfirstbudget(truth, budgetid):
     if truth == 0:
         budgetnum = 1
@@ -77,16 +77,58 @@ def createfirstbudget(truth, budgetid):
         createfirstbudget(truth, budgetid)
 
 
+###Allows User to Design Budget after Defining it
+def budgetmaker(chosenbudgetid):
+    cursor.execute("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME ='budgetsinfo'")
+    row = cursor.fetchall()
+    if len(row)<1:
+        cursor.execute("CREATE TABLE budgetsinfo(COLUMNID text, CATEGORY text, USDAMOUNT int)")
+    totamount = int(input("What is the total amount in USD in this budget?   "))
+    amountspent = 0
+    newcategorylist = [["Total", totamount]]
+    cursor.execute("INSERT INTO budgetsinfo VALUES(%s, %s, %s)", ((chosenbudgetid), newcategorylist[0][0], newcategorylist[0][1]))
+
+    numberofcategories = int(input("Enter the total number of categories in your budget  "))
+    while len(newcategorylist) < numberofcategories:
+        for r in range(1, numberofcategories+1):
+            categoryname = (input("Enter category name:  "))
+            categorybudget = int(input("Enter category budget:  "))
+            newcategorylist.append([categoryname, categorybudget])
+            cursor.execute("INSERT INTO budgetsinfo VALUES(%s, %s, %s)", (chosenbudgetid, newcategorylist[r][0], newcategorylist[r][1]))
+            amountspent = amountspent + newcategorylist[r][1]
+    if amountspent < totamount:
+        newcategorylist.append(["Savings", (totamount - amountspent)])
+    print(newcategorylist)
+
+
+
+
+
+
+
+
+
 def startingmenu():
     global truth
     global budgetid
-    print ("To create a new budget, press 1. To manage an existing budget, press 2")
+    print ("To add a new budget to list, press 1. To newly design an existing budget, press 2. To delete a budget, press 3. To delete all, press 4")
     startanswerint = int(input("Press 1 or 2 "))
     if startanswerint == 1:
         checktableisthere()
         createfirstbudget(truth, budgetid)
     elif startanswerint == 2:
         print("PLACEHOLDER")
+        print("Choose a budget to manage")
+        openingcheck()
+        chosenbudgetid = (input("Enter the id # of a budget:   "))
+        cursor.execute(("SELECT * FROM Budgets WHERE IDnum = %s"), (chosenbudgetid))
+        row = cursor.fetchall()
+        print(row)
+        if len(row) > 0:
+            budgetmaker(chosenbudgetid)
+        else:
+            print("NOT FOUND")
+
 
 
 startingmenu()
