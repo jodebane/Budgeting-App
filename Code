@@ -2,8 +2,8 @@ import MySQLdb
 
 ####DATABASE CONNECTION
 db=MySQLdb.connect(host="jodebane.mysql.pythonanywhere-services.com",
-                   user="jodebane",
-                   passwd="matad0rs",
+                   user="****",
+                   passwd="****",
                    db="jodebane$Budgeting",
 
                    )
