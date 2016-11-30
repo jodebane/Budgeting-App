@@ -1,10 +1,7 @@
 import MySQLdb
 
 ####DATABASE CONNECTION
-db=MySQLdb.connect(host="jodebane.mysql.pythonanywhere-services.com",
-                   user="****",
-                   passwd="****",
-                   db="jodebane$Budgeting",
+db=MySQLdb.connect(*******,
 
                    )
 
@@ -21,9 +18,14 @@ def openingcheck():
     r= cursor.execute("SELECT * FROM Budgets")
     print (r)
 
-def createtable():
+
+###DELETE TABLES
+
+def refreshtable():
     cursor.execute("DROP TABLE Budgets")
+    cursor.execute("DROP TABLE budgetsinfo")
     cursor.execute("CREATE TABLE Budgets(IDnum int, Name text, Type text, Weeks int)")
+    db.commit()
 
 
 ###Checks that Table Exists
@@ -102,6 +104,19 @@ def budgetmaker(chosenbudgetid):
 
 
 
+    ##APPEND TO SQL, rows with name and amount for each category, including oen for total
+
+
+#####Allows User to View Budget
+
+def viewbudget():
+    viewname = (input("Enter the id of the budget you wish to view "))
+    cursor.execute("SELECT * FROM budgetsinfo WHERE COLUMNID = %s", (viewname))
+    y = cursor.fetchall()
+    print(y)
+
+
+
 
 
 
@@ -111,8 +126,13 @@ def budgetmaker(chosenbudgetid):
 def startingmenu():
     global truth
     global budgetid
-    print ("To add a new budget to list, press 1. To newly design an existing budget, press 2. To delete a budget, press 3. To delete all, press 4")
-    startanswerint = int(input("Press 1 or 2 "))
+    cursor.execute("SELECT * FROM Budgets")
+    budgetprint = cursor.fetchall()
+    print ("KEY FOR BUDGET INFO: Id number, Name, Type, Weeks")
+    print (budgetprint)
+    print ("To add a new budget to list, press 1. To newly design an existing budget, press 2. To delete one budget, press 3. To delete all, press 4")
+    print("To view a budget, press 5. To edit a budget, press 6")
+    startanswerint = int(input("Press a number "))
     if startanswerint == 1:
         checktableisthere()
         createfirstbudget(truth, budgetid)
@@ -128,6 +148,17 @@ def startingmenu():
             budgetmaker(chosenbudgetid)
         else:
             print("NOT FOUND")
+    elif startanswerint == 3:
+        print("PLACEHOLDER")
+
+    elif startanswerint == 4:
+        refreshtable()
+    elif startanswerint == 5:
+         viewbudget()
+    finalanswer = int(input("Press 1 to continue using app  "))
+    if finalanswer == 1:
+        startingmenu()
+
 
 
 
