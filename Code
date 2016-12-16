@@ -1,7 +1,7 @@
 import MySQLdb
 
 ####DATABASE CONNECTION
-db=MySQLdb.connect(******,
+db=MySQLdb.connect(*****
 
                    )
 
@@ -141,7 +141,7 @@ def startingmenu():
     print ("KEY FOR BUDGET INFO: Id number, Name, Type, Weeks")
     print (budgetprint)
     print ("To add a new budget to list, press 1. To newly design an existing budget, press 2. To delete one budget, press 3. To delete all, press 4")
-    print("To view a budget, press 5. To edit a budget, press 6")
+    print("To view a budget, press 5.")
     startanswerint = int(input("Press a number "))
     if startanswerint == 1:
         checktableisthere()
